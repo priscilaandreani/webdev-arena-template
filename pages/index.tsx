@@ -28,6 +28,7 @@ import {
   IoMapOutline,
   IoArrowBack,
   IoMenu,
+  IoLocation,
 } from 'react-icons/io5';
 import { FaMicrophone } from 'react-icons/fa';
 
@@ -868,6 +869,19 @@ function Location() {
 
   return (
     <div>
+      <div className='flex justify-between w-full absolute mt-20 px-4 z-10 gap-2'>
+        <input
+          type='text'
+          placeholder='Search destination here'
+          className='w-full px-2 bg-white rounded-2xl z-10'></input>
+        <button className='size-10 bg-indigo-500 px-2 py-2 rounded-full z-10 flex align-center items-center justify-center'>
+          <FaMicrophone />
+        </button>
+      </div>
+      <div className='absolute top-1/2 left-1/2 bg-indigo-500 rounded-full size-14 z-10 flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2'>
+        <IoLocation />
+      </div>
+
       <iframe
         className='w-screen h-screen'
         src={placeUrl}
@@ -876,6 +890,7 @@ function Location() {
         style={{ border: 0 }}
         loading='lazy'
         title={`${name} location`}></iframe>
+
       <div className='relative mx-6 -mt-40 bg-white px-2 py-2 rounded-2xl shadow-lg z-10 flex justify-between items-center gap-1'>
         <img
           src='https://images.unsplash.com/photo-1528214968864-8dd00782fa9e?q=80&w=1219&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
