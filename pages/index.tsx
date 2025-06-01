@@ -26,6 +26,7 @@ import {
   IoQrCodeOutline,
   IoPeopleOutline,
   IoMapOutline,
+  IoArrowBack,
 } from 'react-icons/io5';
 import { FaMicrophone } from 'react-icons/fa';
 
@@ -384,9 +385,9 @@ function Destination({
       <img
         src={uri}
         alt={name}
-        className='rounded-lg w-full md:h-36 h-full object-cover'
+        className='rounded-lg w-full h-36 object-cover'
       />
-      <div className='hidden md:flex flex-col px-3 gap-1 py-2'>
+      <div className='flex flex-col px-3 gap-1 py-2'>
         <p className='text-sm font-bold'>{name}</p>
         <p className='text-xs text-gray-500'>
           ★ {rating} ({reviewCount} reviews)
@@ -832,7 +833,8 @@ function Location() {
   );
 }
 
-function OnboardingScreen() {
+const OnBoardingScreen = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
   const images = [
     'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -841,51 +843,82 @@ function OnboardingScreen() {
     'https://images.unsplash.com/photo-1587651687979-77cf05d1b841?q=80&w=1886&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   ];
 
-  const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: true }));
+  const goToPrevious = () => {
+    const isFirstSlide = currentIndex === 0;
+    const newIndex = isFirstSlide ? images.length - 1 : currentIndex - 1;
+    setCurrentIndex(newIndex);
+  };
+
+  const goToNext = () => {
+    const isLastSlide = currentIndex === images.length - 1;
+    const newIndex = isLastSlide ? 0 : currentIndex + 1;
+    setCurrentIndex(newIndex);
+  };
+
+  const handleSkip = () => {
+    // Lógica para pular para a próxima página/tela
+    // Por exemplo, se estiver usando React Router: history.push('/landing');
+    console.log("Botão 'Pular' clicado. Navegar para a tela de destino.");
+    alert('Navegando para a próxima tela (simulação).');
+  };
 
   return (
-    <div className='relative flex h-screen w-screen'>
-      <Carousel
-        plugins={[plugin.current]}
-        className='h-screen w-screen'
-        onMouseEnter={plugin.current.stop}
-        onMouseLeave={plugin.current.reset}>
-        <CarouselContent>
-          {images.map((_, index) => (
-            <CarouselItem key={index}>
-              <Card className='w-screen h-screen'>
-                <img
-                  src={images[index]}
-                  alt='Mount Bromo'
-                  className='rounded-lg w-full h-full object-cover'
-                />
-              </Card>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
-      <div className='absolute flex items-center justify-between gap-4'>
-        <div className='flex flex-col gap-2 p-4 h-screen'>
-          <h1 className='text-white text-4xl py-4 '>
-            Plan Your <br /> Trip With Ease
-          </h1>
+    <div className='relative h-screen w-screen overflow-hidden'>
+      <div
+        style={{ backgroundImage: `url(${images[currentIndex]})` }}
+        className='h-full w-full bg-cover bg-center transition-all duration-700 ease-in-out'></div>
 
-          <div className='flex flex-col gap-2 mt-auto py-4'>
-            <p className='text-white text-base'>
-              Discover destinations, compare options, and organize your journey
-              in one simple app.
-            </p>
+      <div className='absolute inset-0 flex flex-col p-4'>
+        <h1 className='text-4xl md:text-6xl font-normal text-white leading-tight'>
+          Plan Your <br />
+          Trip with Ease
+        </h1>
+        <p className='absolute bottom-32'>
+          Discover destinations, compare options, and organize your journey in
+          one simple app.
+        </p>
+        <div className='absolute bottom-20 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10'>
+          {images.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`w-3 h-3 rounded-full ${
+                currentIndex === index
+                  ? 'bg-white'
+                  : 'bg-gray-400 opacity-75 hover:opacity-100'
+              } transition-all`}
+              aria-label={`Ir para o slide ${index + 1}`}></button>
+          ))}
+        </div>
+
+        <div className='flex h-full justify-end'>
+          <div className='flex w-full align-center'>
             <button
               onClick={() => navigate('/dashboard')}
               className='bg-white text-indigo-500 rounded-full w-24 px-4 py-2 mt-auto'>
               Skip
             </button>
+
+            <div className='flex gap-2 mt-auto ml-auto'>
+              <button
+                onClick={goToPrevious}
+                className='size-10 flex items-center justify-center bg-white text-indigo-500 rounded-full hover:bg-opacity-75 transition-opacity focus:outline-none z-10'
+                aria-label='Slide anterior'>
+                <IoArrowBack />
+              </button>
+              <button
+                onClick={goToNext}
+                className='size-10 flex items-center justify-center bg-indigo-500  text-white rounded-full hover:bg-opacity-75 transition-opacity focus:outline-none z-10'
+                aria-label='Next photo'>
+                <IoArrowForward />
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
 const AppWithRouter = dynamic(
   () =>
@@ -894,7 +927,7 @@ const AppWithRouter = dynamic(
       return () => (
         <BrowserRouter>
           <Routes>
-            <Route path='/' element={<OnboardingScreen />} />
+            <Route path='/' element={<OnBoardingScreen />} />
             <Route path='/dashboard' element={<Dashboard />} />
             <Route path='/destination/:name' element={<DestinationDetail />} />
             <Route path='/location/:name' element={<Location />} />
