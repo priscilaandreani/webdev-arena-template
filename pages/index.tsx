@@ -27,6 +27,7 @@ import {
   IoPeopleOutline,
   IoMapOutline,
   IoArrowBack,
+  IoMenu,
 } from 'react-icons/io5';
 import { FaMicrophone } from 'react-icons/fa';
 
@@ -650,37 +651,68 @@ function Dashboard() {
 function DestinationDetail() {
   const { name } = useParams<{ name: string }>();
   const navigate = useNavigate();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const decodedName = decodeURIComponent(name || '');
 
-  const images = [
+  const places = [
     {
       place: 'Komodo Island',
-      uri: 'https://images.unsplash.com/photo-1565369729210-012211942251?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      category: 'Camping',
+      city: 'Komodo, West Manggarai Regency',
+      photos: [
+        'https://images.unsplash.com/photo-1565369729210-012211942251?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        'https://plus.unsplash.com/premium_photo-1661876927993-bedb3ab87208?q=80&w=3055&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        'https://images.unsplash.com/photo-1607427225127-a4ae1d4b050c?q=80&w=2934&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      ],
     },
     {
       place: 'Bali',
-      uri: 'https://images.unsplash.com/photo-1532186651327-6ac23687d189?q=80&w=3149&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      category: 'Beach',
+      city: 'Bali, Indonesia',
+      photos: [
+        'https://images.unsplash.com/photo-1532186651327-6ac23687d189?q=80&w=3149&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        'https://images.unsplash.com/photo-1555400038-63f5b517a47?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        'https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      ],
     },
     {
       place: 'Mount Bromo',
-      uri: 'https://images.unsplash.com/photo-1587651687979-77cf05d1b841?q=80&w=1886&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      category: 'Mountain',
+      city: 'Gunung Bromo, East Java',
+      photos: [
+        'https://images.unsplash.com/photo-1587651687979-77cf05d1b841?q=80&w=1886&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        'https://plus.unsplash.com/premium_photo-1697729935951-420138024919?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        'https://images.unsplash.com/photo-1609757574846-9ab99fc39a03?q=80&w=2948&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      ],
     },
     {
       place: 'Jakarta',
-      uri: 'https://images.unsplash.com/photo-1575864716793-49a09717eb03?q=80&w=3165&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      category: 'Urban',
+      city: 'Jakarta, Indonesia',
+      photos: [
+        'https://images.unsplash.com/photo-1575864716793-49a09717eb03?q=80&w=3165&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        'https://images.unsplash.com/photo-1567756396406-f529ebb5583d?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        'https://plus.unsplash.com/premium_photo-1733317372362-d34c198096bd?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      ],
     },
     {
       place: 'Yogyakarta',
-      uri: 'https://images.unsplash.com/photo-1593642532973-d31b2c4f5d6f?q=80&w=3165&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      category: 'Cultural',
+      city: 'Yogyakarta, Indonesia',
+      photos: [
+        'https://images.unsplash.com/photo-1593642532973-d31b2c4f5d6f?q=80&w=3165&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        'https://images.unsplash.com/photo-1630214801769-24784bfd2b9c?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        'https://images.unsplash.com/photo-1552035191-f10bd9fbf35e?q=80&w=2936&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      ],
     },
   ];
 
-  const image = images.find(
+  const place = places.find(
     (img) => img.place.toLowerCase() === decodedName.toLowerCase()
   );
 
-  const imageUrl = image?.uri || 'https://source.unsplash.com/600x300/?travel';
+  const images = place?.photos || [''];
 
   const handleClick = () => {
     navigate(`/location/${encodeURIComponent(decodedName)}`);
@@ -689,10 +721,44 @@ function DestinationDetail() {
   return (
     <div className='w-full h-screen bg-white'>
       <img
-        src={imageUrl}
-        alt={name}
-        className='w-full h-80 object-cover mb-4'
+        src={images[currentIndex]}
+        alt={place?.place}
+        className='w-full h-80 object-cover transition-all duration-700 ease-in-out'
       />
+      <div className='absolute top-8 flex justify-between items-center z-10 px-1 w-full'>
+        <button
+          onClick={() => navigate('/dashboard')}
+          className='text-white p-2 size-8 rounded-full bg-white bg-opacity-20 hover:bg-gray-700 transition-colors'>
+          <IoArrowBack />
+        </button>
+        <h3 className='flex align-items justify-center p-2 text-xs text-white font-bold ml-3  bg-white bg-opacity-20 rounded-full text-center'>
+          {place?.city}
+        </h3>
+        <button className='text-white p-2 size-8 rounded-full bg-white bg-opacity-20 hover:bg-gray-700 transition-colors'>
+          <IoMenu />
+        </button>
+      </div>
+      <div className='absolute top-64 right-3 transform -translate-x-1/2 flex space-x-2 z-10'>
+        {images.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`w-3 h-3 rounded-full ${
+              currentIndex === index
+                ? 'bg-white'
+                : 'bg-gray-400 opacity-75 hover:opacity-100'
+            } transition-all`}
+            aria-label={`Ir para o slide ${index + 1}`}></button>
+        ))}
+      </div>
+      <div className=' absolute top-64 left-3 flex bg-white text-gray-800 rounded-full px-2 py-1 text-xs z-10'>
+        <img
+          src={images[0]}
+          alt={place?.place}
+          className='size-4 rounded-full mr-2'
+        />
+        {place?.category}
+      </div>
       <div className='absolute px-4 py-4 bg-white rounded-lg -mt-8 z-10 w-full'>
         <div className='flex justify-between items-center mb-4'>
           <h1 className='text-2xl font-bold mb-2 text-gray-800'>{name}</h1>
@@ -833,7 +899,7 @@ function Location() {
   );
 }
 
-const OnBoardingScreen = () => {
+function OnBoardingScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
   const images = [
@@ -853,13 +919,6 @@ const OnBoardingScreen = () => {
     const isLastSlide = currentIndex === images.length - 1;
     const newIndex = isLastSlide ? 0 : currentIndex + 1;
     setCurrentIndex(newIndex);
-  };
-
-  const handleSkip = () => {
-    // Lógica para pular para a próxima página/tela
-    // Por exemplo, se estiver usando React Router: history.push('/landing');
-    console.log("Botão 'Pular' clicado. Navegar para a tela de destino.");
-    alert('Navegando para a próxima tela (simulação).');
   };
 
   return (
@@ -918,7 +977,7 @@ const OnBoardingScreen = () => {
       </div>
     </div>
   );
-};
+}
 
 const AppWithRouter = dynamic(
   () =>
